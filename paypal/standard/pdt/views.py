@@ -31,8 +31,14 @@ def process_pdt(request):
             # This is a new transaction so we continue processing PDT request
             pass
 
+        params = request.GET.copy()
+        if "payment_date" in params:
+            del params["payment_date"]
+        if "notify_version" in params:
+            del params["notify_version"]
+
         if pdt_obj is None:
-            form = PayPalPDTForm(request.GET)
+            form = PayPalPDTForm(params)
             if form.is_valid():
                 try:
                     pdt_obj = form.save(commit=False)

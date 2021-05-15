@@ -107,6 +107,17 @@ class PDTTest(TestCase):
         pdt_obj = PayPalPDT.objects.all()[0]
         self.assertEqual(pdt_obj.custom, self.get_params['cm'])
 
+    def test_pdt_new_params(self):
+        self.assertEqual(len(PayPalPDT.objects.all()), 0)
+        self.get_params = {
+            **self.get_params,
+            "notify_version": "UNVERSIONED",
+            "payment_date": "2021-05-11T12:00:00Z"
+        }
+        paypal_response = self.client.get("/pdt/", self.get_params)
+        self.assertContains(paypal_response, 'Transaction complete', status_code=200)
+        self.assertEqual(len(PayPalPDT.objects.all()), 1)
+
 
 class MockedResponse:
     content = 'test'
